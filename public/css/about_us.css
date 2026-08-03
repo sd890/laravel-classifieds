@@ -1,0 +1,46 @@
+.about-card {
+    border-radius: 20px;
+    background: #fff;
+}
+
+.about-title {
+    color: #c2185b;
+    font-weight: 700;
+    font-size: 2rem;
+}
+
+.about-divider {
+    width: 80px;
+    height: 4px;
+    background: #c2185b;
+    margin: 10px auto 0;
+    border-radius: 10px;
+}
+
+.about-text {
+    color: #444;
+    line-height: 2.2;
+    font-size: 1.1rem;
+    text-align: justify;
+}
+
+.about-features {
+    background: #f8f9fa;
+    border-radius: 15px;
+    padding: 20px;
+}
+
+.feature-item {
+    padding: 12px;
+    margin-bottom: 10px;
+    background: #fff;
+    border-right: 4px solid #c2185b;
+    border-radius: 10px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.feature-item:hover {
+    transform: translateX(-5px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
