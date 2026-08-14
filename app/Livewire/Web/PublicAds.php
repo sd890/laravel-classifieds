@@ -38,7 +38,12 @@ class PublicAds extends Component
    
     public function getAdsQuery()
     {
-        return Ad::query()->with('city','category')
+        return Ad::query()->where('status',\App\Enums\AdStatus::Approved)
+        ->where(function ($query) {
+            $query->whereNull('expired_at')
+            ->orWhere('expired_at','>',now());
+        })
+        ->with('city','category')
         ->when($this->search,function ($q) {
             $q->where(function($query){
                 $query->where('title','like','%'.$this->search.'%')
@@ -99,7 +104,7 @@ class PublicAds extends Component
         })
         ->when($this->sort == 'expensive', function ($q) {
             $q->orderByDesc('price');
-        })->where('status',\App\Enums\AdStatus::Approved);
+        });
     }
     public function render()
     {
