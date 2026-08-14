@@ -18,29 +18,60 @@ class PublicAdsController extends Controller
     {
         return view('web.publicAds.index');
     }
+
     public function show($id)
     {
-        $ad=Ad::query()->findOrFail($id);
+        $ad=Ad::query()->where('status',\App\Enums\AdStatus::Approved->value)
+        ->where(function ($query) {
+            $query->whereNull('expired_at')
+            ->orWhere('expired_at','>',now());
+        })
+        ->findOrFail($id);
 
        
-            // ساخت کلید اختصاصی برای این آگهی در سشن
-            $sessionKey = 'viewed_ad_' . $ad->id;
-            $today = now()->toDateString(); // تاریخ امروز
+             // افزایش بازدید روزانه
+                $sessionKey = 'viewed_ad_' . $ad->id;
+                $today = now()->toDateString();
 
-            if(!session()->has($sessionKey) || session($sessionKey) !==$today)
-            {
-                 // افزایش تعداد بازدید
-                $ad->increment('views');
-                session([$sessionKey => $today]);
+                if (
+                    !session()->has($sessionKey) ||
+                    session($sessionKey) !== $today
+                ) {
+                    $ad->increment('views');
+
+                    session([
+                        $sessionKey => $today
+                    ]);
+                }
+
+                // تصاویر آگهی
+        $images = Image::query()
+        ->where('ad_id', $ad->id)
+        ->take(5)
+        ->get();
+
+        // اگر کاربر لاگین نکرده باشد
+            if (!Auth::check()) {
+                return view('web.publicAds.show', compact(
+                    'ad',
+                    'images'
+                ));
             }
-
+    
             $recivedId=$ad->user_id;
             $userId=Auth::id();
-            $images=Image::query()->where('ad_id',$ad->id)->take(5)->get();
+
+             // اگر کاربر صاحب آگهی باشد، چت لازم نیست
+           /* if ($userId == $recivedId) {
+                return view('web.publicAds.show', compact(
+                    'ad',
+                    'images'
+                ));
+            }
+ */
+           
             
-            if($userId)
-            {
-                $images=Image::query()->where('ad_id',$ad->id)->take(5)->get();
+              
 
           $conversation = Conversation::between($userId, $recivedId)->first();
 
@@ -54,6 +85,8 @@ class PublicAdsController extends Controller
                     
                 );
             }
+
+            // دریافت پیام ها
            $messages = $conversation->messages()
             ->with('sender')
             ->latest()
@@ -61,14 +94,16 @@ class PublicAdsController extends Controller
             ->get()
             ->reverse();
 
-            return view('web.publicAds.show',compact('ad','conversation','messages','images'));
-            }
-
-            else
-            {
-                return view('web.publicAds.show',compact('ad','images'));
-            }
-
+             return view(
+        'web.publicAds.show',
+        compact(
+            'ad',
+            'conversation',
+            'messages',
+            'images'
+             )
+        );
+            
         
     }
     public function conversation(Request $request,$id)

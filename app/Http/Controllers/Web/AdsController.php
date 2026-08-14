@@ -87,7 +87,8 @@ class AdsController extends Controller
     {
         $user=Auth::user();
         $ad = Ad::findOrFail($id);
-       
+        
+        
         
             // ساخت کلید اختصاصی برای این آگهی در سشن
             $sessionKey = 'viewed_ad_' . $ad->id;

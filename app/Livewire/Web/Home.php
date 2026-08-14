@@ -26,6 +26,10 @@ class Home extends Component
     public function render()
     {
          $ads = Ad::query()
+         ->where('status',\App\Enums\AdStatus::Approved)->
+         where(function($q){
+            $q->whereNull('expired_at')->orWhere('expired_at','>',now());
+         })
             ->with('city', 'category')
             ->when($this->search, function ($q) {
                 $q->where(function ($query) {
@@ -44,7 +48,7 @@ class Home extends Component
             {
                 $q->where('city_id',$this->selectedCity);
             })
-            ->where('status',\App\Enums\AdStatus::Approved)->latest()
+            ->latest()
             ->paginate(20);
 
             $categories = Category::orderBy('title')->pluck('title', 'id');

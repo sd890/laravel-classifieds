@@ -9,7 +9,7 @@
                  class="card-img-top" 
                  alt="{{ $ad->title }}" 
                  style="height: 300px; object-fit: cover;">
-        @endif
+        @endif 
 
         <div class="card-body" style="min-height: 500px;">
             <h3 class="card-title text-primary">{{ $ad->title }}</h3>
