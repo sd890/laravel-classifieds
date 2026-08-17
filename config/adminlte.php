@@ -347,7 +347,21 @@ return [
 
                 
             ],
-        ], [
+        ],
+         [
+            'text' => 'کاربران',
+            'icon' => 'fas fa-fw fa-share',
+            'submenu' => [
+                [
+                    'text' => 'لیست کاربران',
+                    'url' => 'admin/users',
+                ],
+                 
+
+                
+            ],
+        ]
+        , [
             'text' => ' وضعیت آگهی ها',
             'icon' => 'fas fa-fw fa-share',
             'submenu' => [
