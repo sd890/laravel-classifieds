@@ -28,6 +28,10 @@ Route::prefix('admin')->middleware('auth')->group(function()
     Route::get('ads-status/approved',[\App\Http\Controllers\Admin\adsStatus::class,'approved']);
     Route::get('ads-status/pending',[\App\Http\Controllers\Admin\adsStatus::class,'pending']);
     Route::get('ads-status/rejected',[\App\Http\Controllers\Admin\adsStatus::class,'rejected']);
+
+    /////////////////users///////////////////////////
+
+    Route::resource('users',\App\Http\Controllers\Admin\UserController::class);
 });
 
 
