@@ -13,26 +13,47 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 /////////////////////admin pages ///////////////////////////////
-Route::prefix('admin')->middleware('auth')->group(function()
-{
-    Route::get('/welcome',function(){
-        return view('admin.welcome');
+	Route::prefix('admin')->middleware(['auth','role:admin,manager,moderator,support'])->group(function()
+	{
+		Route::get('/welcome',function(){
+			return view('admin.welcome');
+		});
+	});
+
+	Route::prefix('admin')->
+	middleware(['auth','role:admin,manager'])->
+	group(function(){
+		Route::resource('category',\App\Http\Controllers\Admin\categoryController::class);
+		Route::resource('povinece',\App\Http\Controllers\Admin\povineceController::class);
+		Route::resource('city',\App\Http\Controllers\Admin\CityController::class);
+
+	   
+	});
+	
+	//////////////////AdsStatus/////////
+
+	Route::prefix('admin')->
+	middleware(['auth','role:admin,manager,moderator'])->
+	group(function(){
+		 
+		Route::get('ads-status',[\App\Http\Controllers\Admin\adsStatus::class,'index']);
+		Route::get('ads-status/approved',[\App\Http\Controllers\Admin\adsStatus::class,'approved']);
+		Route::get('ads-status/pending',[\App\Http\Controllers\Admin\adsStatus::class,'pending']);
+		Route::get('ads-status/rejected',[\App\Http\Controllers\Admin\adsStatus::class,'rejected']);
+		
+	});
+
+				/////users//////////////
+    Route::prefix('admin')
+    ->middleware(['auth', 'role:admin,manager'])
+    ->group(function () {
+
+        Route::resource(
+            'users',
+            \App\Http\Controllers\Admin\UserController::class
+        );
+
     });
-
-    Route::resource('category',\App\Http\Controllers\Admin\categoryController::class);
-    Route::resource('povinece',\App\Http\Controllers\Admin\povineceController::class);
-    Route::resource('city',\App\Http\Controllers\Admin\CityController::class);
-
-    //////////////////AdsStatus/////////
-    Route::get('ads-status',[\App\Http\Controllers\Admin\adsStatus::class,'index']);
-    Route::get('ads-status/approved',[\App\Http\Controllers\Admin\adsStatus::class,'approved']);
-    Route::get('ads-status/pending',[\App\Http\Controllers\Admin\adsStatus::class,'pending']);
-    Route::get('ads-status/rejected',[\App\Http\Controllers\Admin\adsStatus::class,'rejected']);
-
-    /////////////////users///////////////////////////
-
-    Route::resource('users',\App\Http\Controllers\Admin\UserController::class);
-});
 
 
 ///////////// web pages//////////////////////////////////

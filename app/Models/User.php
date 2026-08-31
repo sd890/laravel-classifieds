@@ -82,6 +82,19 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Ad::class,'favorites')->withTimestamps();
     }
+
+    public function role()
+    {
+        return $this->belongsTo(Role::class,'role','name');
+    }
+
+    public function hasPermission(string $permission): bool
+        {
+            return $this->role
+                ->permissions()
+                ->where('name', $permission)
+                ->exists();
+        }
     
      static public function saveImage($file)
    {
